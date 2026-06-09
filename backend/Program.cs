@@ -15,6 +15,7 @@ builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SeriesService>();
 builder.Services.AddScoped<ReviewService>();
+builder.Services.AddScoped<SeedService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -35,6 +36,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+if (args.Length > 0 && args[0] == "seed")
+{
+    var reset = args.Contains("--reset");
+    var sp = builder.Services.BuildServiceProvider();
+    var seedService = sp.GetRequiredService<SeedService>();
+    await seedService.Seed(reset);
+    Console.WriteLine(reset ? "Datos reiniciados y creados." : "Datos de prueba insertados.");
+    return;
+}
 
 var app = builder.Build();
 
