@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoReviews.Api.Models;
 using MongoReviews.Api.Models.Dtos;
@@ -36,7 +37,7 @@ public class ReviewService
         await _db.Reviews.InsertOneAsync(review);
         await RecalcularRating(request.IdSerie);
 
-        return await ToResponse(review);
+        return await GetReviewWithUser(review.Id);
     }
 
     public async Task<ReviewResponse> Update(string id, CreateReviewRequest request, string userId)
@@ -56,10 +57,8 @@ public class ReviewService
         );
 
         await RecalcularRating(request.IdSerie);
-        review.Puntuacion = request.Puntuacion;
-        review.Comentario = request.Comentario;
 
-        return await ToResponse(review);
+        return await GetReviewWithUser(id);
     }
 
     public async Task<bool> Delete(string id, string userId)
@@ -85,20 +84,40 @@ public class ReviewService
         var total = (int)await _db.Reviews.CountDocumentsAsync(filter);
         var totalPaginas = (int)Math.Ceiling(total / (double)limite);
 
-        var reviews = await _db.Reviews
-            .Find(filter)
-            .SortByDescending(r => r.CreatedAt)
-            .Skip((pagina - 1) * limite)
-            .Limit(limite)
-            .ToListAsync();
+        var pipeline = new BsonDocument[]
+        {
+            new("$match", new BsonDocument("idSerie", new ObjectId(idSerie))),
+            new("$sort", new BsonDocument("createdAt", -1)),
+            new("$skip", (pagina - 1) * limite),
+            new("$limit", limite),
+            new("$lookup", new BsonDocument
+            {
+                { "from", "users" },
+                { "localField", "idUsuario" },
+                { "foreignField", "_id" },
+                { "as", "usuario" }
+            }),
+            new("$unwind", "$usuario"),
+            new("$project", new BsonDocument
+            {
+                { "_id", 1 },
+                { "idUsuario", 1 },
+                { "idSerie", 1 },
+                { "puntuacion", 1 },
+                { "comentario", 1 },
+                { "createdAt", 1 },
+                { "nombreUsuario", "$usuario.nombre" },
+                { "avatarUsuario", "$usuario.avatar" }
+            })
+        };
 
-        var response = new List<ReviewResponse>();
-        foreach (var r in reviews)
-            response.Add(await ToResponse(r));
+        var reviews = await _db.Reviews
+            .Aggregate<ReviewResponse>(pipeline)
+            .ToListAsync();
 
         return new PagedResult<ReviewResponse>
         {
-            Datos = response,
+            Datos = reviews,
             Total = total,
             Pagina = pagina,
             TotalPaginas = totalPaginas
@@ -107,50 +126,97 @@ public class ReviewService
 
     public async Task<List<ReviewResponse>> GetByUser(string userId)
     {
-        var reviews = await _db.Reviews
-            .Find(r => r.IdUsuario == userId)
-            .SortByDescending(r => r.CreatedAt)
+        var pipeline = new BsonDocument[]
+        {
+            new("$match", new BsonDocument("idUsuario", new ObjectId(userId))),
+            new("$sort", new BsonDocument("createdAt", -1)),
+            new("$lookup", new BsonDocument
+            {
+                { "from", "users" },
+                { "localField", "idUsuario" },
+                { "foreignField", "_id" },
+                { "as", "usuario" }
+            }),
+            new("$unwind", "$usuario"),
+            new("$project", new BsonDocument
+            {
+                { "_id", 1 },
+                { "idUsuario", 1 },
+                { "idSerie", 1 },
+                { "puntuacion", 1 },
+                { "comentario", 1 },
+                { "createdAt", 1 },
+                { "nombreUsuario", "$usuario.nombre" },
+                { "avatarUsuario", "$usuario.avatar" }
+            })
+        };
+
+        return await _db.Reviews
+            .Aggregate<ReviewResponse>(pipeline)
             .ToListAsync();
+    }
 
-        var response = new List<ReviewResponse>();
-        foreach (var r in reviews)
-            response.Add(await ToResponse(r));
+    private async Task<ReviewResponse> GetReviewWithUser(string reviewId)
+    {
+        var pipeline = new BsonDocument[]
+        {
+            new("$match", new BsonDocument("_id", new ObjectId(reviewId))),
+            new("$lookup", new BsonDocument
+            {
+                { "from", "users" },
+                { "localField", "idUsuario" },
+                { "foreignField", "_id" },
+                { "as", "usuario" }
+            }),
+            new("$unwind", "$usuario"),
+            new("$project", new BsonDocument
+            {
+                { "_id", 1 },
+                { "idUsuario", 1 },
+                { "idSerie", 1 },
+                { "puntuacion", 1 },
+                { "comentario", 1 },
+                { "createdAt", 1 },
+                { "nombreUsuario", "$usuario.nombre" },
+                { "avatarUsuario", "$usuario.avatar" }
+            })
+        };
 
-        return response;
+        return (await _db.Reviews
+            .Aggregate<ReviewResponse>(pipeline)
+            .FirstOrDefaultAsync())!;
     }
 
     private async Task RecalcularRating(string idSerie)
     {
-        var stats = await _db.Reviews
-            .Find(r => r.IdSerie == idSerie)
-            .ToListAsync();
+        var pipeline = new BsonDocument[]
+        {
+            new("$match", new BsonDocument("idSerie", new ObjectId(idSerie))),
+            new("$group", new BsonDocument
+            {
+                { "_id", null },
+                { "promedio", new BsonDocument("$avg", "$puntuacion") },
+                { "total", new BsonDocument("$sum", 1) }
+            })
+        };
 
-        var promedio = stats.Count > 0
-            ? Math.Round(stats.Average(r => r.Puntuacion), 1)
+        var result = await _db.Reviews
+            .Aggregate<BsonDocument>(pipeline)
+            .FirstOrDefaultAsync();
+
+        var promedio = result is not null
+            ? Math.Round(result["promedio"].AsDouble, 1)
             : 0.0;
+
+        var total = result is not null
+            ? result["total"].AsInt32
+            : 0;
 
         await _db.Series.UpdateOneAsync(
             s => s.Id == idSerie,
             Builders<Series>.Update
                 .Set(s => s.RatingPromedio, promedio)
-                .Set(s => s.TotalResenas, stats.Count)
+                .Set(s => s.TotalResenas, total)
         );
-    }
-
-    private async Task<ReviewResponse> ToResponse(Review review)
-    {
-        var user = await _db.Users.Find(u => u.Id == review.IdUsuario).FirstOrDefaultAsync();
-
-        return new ReviewResponse
-        {
-            Id = review.Id,
-            IdUsuario = review.IdUsuario,
-            NombreUsuario = user?.Nombre ?? "Desconocido",
-            AvatarUsuario = user?.Avatar,
-            IdSerie = review.IdSerie,
-            Puntuacion = review.Puntuacion,
-            Comentario = review.Comentario,
-            CreatedAt = review.CreatedAt
-        };
     }
 }
