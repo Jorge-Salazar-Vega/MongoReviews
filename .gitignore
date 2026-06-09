@@ -1,0 +1,43 @@
+# Backend (C# / .NET)
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
+*.DotSettings.user
+*.csproj.user
+appsettings.*.local.json
+appsettings.Development.json
+*Secret.json
+**/secrets.json
+
+# NuGet
+packages/
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Frontend (estático)
+node_modules/
+.env.local
+.env.development
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs
+*.log
+*.logs
+
+# Temp
+tmp/
+temp/
