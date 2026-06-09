@@ -1,7 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoReviews.Api.Services;
+
+var pack = new ConventionPack { new CamelCaseElementNameConvention() };
+ConventionRegistry.Register("camelCase", pack, _ => true);
 
 var builder = WebApplication.CreateBuilder(args);
 
