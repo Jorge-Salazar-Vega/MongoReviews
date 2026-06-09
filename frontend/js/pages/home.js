@@ -45,27 +45,6 @@ function renderSeries(series) {
     `).join('');
 }
 
-function renderPagination(containerId, page, totalPages, callback) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
-
-    let html = '';
-    if (page > 1) html += `<button onclick="${callback.name}(${page - 1})">‹</button>`;
-
-    for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) {
-        html += `<button class="${i === page ? 'active' : ''}" onclick="${callback.name}(${i})">${i}</button>`;
-    }
-
-    if (page < totalPages) html += `<button onclick="${callback.name}(${page + 1})">›</button>`;
-
-    container.innerHTML = html;
-}
-
 async function searchSeries() {
     const q = document.getElementById('searchInput')?.value?.trim();
     if (!q) { loadSeries(); return; }
