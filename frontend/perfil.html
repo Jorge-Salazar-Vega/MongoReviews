@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi perfil - MongoReviews</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar"></nav>
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">👤</div>
+            <div>
+                <h2 id="profileName">Usuario</h2>
+                <p class="text-muted" id="profileEmail"></p>
+            </div>
+        </div>
+        <h2 class="section-title">Mis reseñas</h2>
+        <div id="myReviews"></div>
+    </div>
+    <div id="toastContainer"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages/perfil.js"></script>
+</body>
+</html>

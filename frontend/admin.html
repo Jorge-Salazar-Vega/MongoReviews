@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - MongoReviews</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar"></nav>
+    <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem">
+            <h2 class="section-title" style="margin:0">Administrar Series</h2>
+            <button class="btn btn-primary" onclick="openCreateModal()">+ Nueva Serie</button>
+        </div>
+        <table class="admin-table" id="adminTable">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Año</th>
+                    <th>Géneros</th>
+                    <th>Rating</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+        </table>
+        <div id="adminPagination" class="pagination"></div>
+    </div>
+
+    <div id="serieModal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3 id="modalTitle">Nueva Serie</h3>
+            <form id="serieForm">
+                <div class="form-group">
+                    <label for="editTitulo">Título *</label>
+                    <input type="text" id="editTitulo" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDescripcion">Descripción *</label>
+                    <textarea id="editDescripcion" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editGeneros">Géneros (separados por coma) *</label>
+                    <input type="text" id="editGeneros" placeholder="Ej: Drama, Suspenso">
+                </div>
+                <div class="form-group">
+                    <label for="editAnio">Año de estreno *</label>
+                    <input type="number" id="editAnio" min="1900" max="2030" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTemporadas">Temporadas *</label>
+                    <input type="number" id="editTemporadas" min="1" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPoster">URL del póster</label>
+                    <input type="url" id="editPoster" placeholder="https://ejemplo.com/poster.jpg">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="toastContainer"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages/admin.js"></script>
+</body>
+</html>

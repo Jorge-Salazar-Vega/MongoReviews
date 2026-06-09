@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serie - MongoReviews</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar"></nav>
+    <div class="container">
+        <div id="serieDetail" class="serie-detail"></div>
+
+        <h2 class="section-title">Reseñas</h2>
+        <div id="reviewForm" class="card hidden" style="margin-bottom:1.5rem">
+            <h3 id="reviewFormTitle">Deja tu reseña</h3>
+            <form id="reviewFormElement">
+                <div class="form-group">
+                    <label>Puntuación</label>
+                    <div class="star-rating" id="starRating">
+                        <input type="radio" name="puntuacion" value="10" id="star10">
+                        <label for="star10">★</label>
+                        <input type="radio" name="puntuacion" value="9" id="star9">
+                        <label for="star9">★</label>
+                        <input type="radio" name="puntuacion" value="8" id="star8">
+                        <label for="star8">★</label>
+                        <input type="radio" name="puntuacion" value="7" id="star7">
+                        <label for="star7">★</label>
+                        <input type="radio" name="puntuacion" value="6" id="star6">
+                        <label for="star6">★</label>
+                        <input type="radio" name="puntuacion" value="5" id="star5">
+                        <label for="star5">★</label>
+                        <input type="radio" name="puntuacion" value="4" id="star4">
+                        <label for="star4">★</label>
+                        <input type="radio" name="puntuacion" value="3" id="star3">
+                        <label for="star3">★</label>
+                        <input type="radio" name="puntuacion" value="2" id="star2">
+                        <label for="star2">★</label>
+                        <input type="radio" name="puntuacion" value="1" id="star1">
+                        <label for="star1">★</label>
+                    </div>
+                    <div class="form-error" id="puntuacionError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="comentario">Comentario</label>
+                    <textarea id="comentario" name="comentario" maxlength="2000"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelReviewBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Publicar</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="reviewsList"></div>
+        <div id="reviewsPagination" class="pagination"></div>
+    </div>
+    <div id="toastContainer"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages/serie.js"></script>
+</body>
+</html>

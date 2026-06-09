@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoReviews - Reseñas de Series</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar"></nav>
+    <div class="container">
+        <section class="hero">
+            <h1>Mongo<span>Reviews</span></h1>
+            <p>Descubre series, comparte tus reseñas y encuentra tu próximo maratón.</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Buscar series por título...">
+                <button class="btn btn-primary" onclick="searchSeries()">Buscar</button>
+            </div>
+        </section>
+        <h2 class="section-title">Series Destacadas</h2>
+        <div class="filters">
+            <select id="genreFilter" onchange="loadSeries()">
+                <option value="">Todos los géneros</option>
+                <option value="Drama">Drama</option>
+                <option value="Comedia">Comedia</option>
+                <option value="Acción">Acción</option>
+                <option value="Terror">Terror</option>
+                <option value="Ciencia Ficción">Ciencia Ficción</option>
+                <option value="Suspenso">Suspenso</option>
+                <option value="Romance">Romance</option>
+                <option value="Animación">Animación</option>
+                <option value="Documental">Documental</option>
+            </select>
+            <select id="sortFilter" onchange="loadSeries()">
+                <option value="titulo">Ordenar por título</option>
+                <option value="rating" selected>Por rating</option>
+                <option value="anio">Por año</option>
+            </select>
+        </div>
+        <div id="seriesGrid" class="grid"></div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+    <div id="toastContainer"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages/home.js"></script>
+</body>
+</html>
