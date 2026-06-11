@@ -9,6 +9,14 @@ ConventionRegistry.Register("camelCase", pack, _ => true);
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Soporte para env vars planas estilo Railway (MONGODB_URI en vez de MongoDB:ConnectionString)
+if (builder.Configuration["MONGODB_URI"] is string uri)
+    builder.Configuration["MongoDB:ConnectionString"] = uri;
+if (builder.Configuration["MONGODB_DB_NAME"] is string dbName)
+    builder.Configuration["MongoDB:DatabaseName"] = dbName;
+if (builder.Configuration["JWT_SECRET"] is string jwtSecret)
+    builder.Configuration["JWT:Secret"] = jwtSecret;
+
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
