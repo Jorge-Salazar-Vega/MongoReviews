@@ -18,9 +18,6 @@ public class SeedController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Seed([FromQuery] bool reset = false)
     {
-        if (!Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Contains("Development") is true)
-            return Forbid();
-
         await _seedService.Seed(reset);
         var msg = reset ? "Datos reiniciados y creados" : "Datos de prueba insertados";
         return Ok(ApiResponse<object>.Ok(null!, msg));
