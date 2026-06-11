@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://127.0.0.1:5173/api'
-    : 'https://api-resenas-series.railway.app/api';
+    : 'https://mongoreviews-production-78a9.up.railway.app/api';
 
 async function apiRequest(endpoint, options = {}) {
     const token = localStorage.getItem('token');
