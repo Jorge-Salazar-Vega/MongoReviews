@@ -194,7 +194,7 @@ public class ReviewService
             new("$match", new BsonDocument("idSerie", new ObjectId(idSerie))),
             new("$group", new BsonDocument
             {
-                { "_id", null },
+                { "_id", BsonNull.Value },
                 { "promedio", new BsonDocument("$avg", "$puntuacion") },
                 { "total", new BsonDocument("$sum", 1) }
             })

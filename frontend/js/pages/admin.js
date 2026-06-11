@@ -100,6 +100,21 @@ async function handleSerieSave(e) {
     }
 }
 
+function openCloudinaryWidget() {
+    cloudinary.openUploadWidget({
+        cloudName: 'dmfvdti3i',
+        uploadPreset: 'Mongo_reviews_preset',
+        folder: 'mongoreviews',
+        sources: ['local', 'url', 'camera'],
+        multiple: false
+    }, (error, result) => {
+        if (!error && result && result.event === 'success') {
+            document.getElementById('editPoster').value = result.info.secure_url;
+            showToast('Imagen subida correctamente');
+        }
+    });
+}
+
 async function deleteSerie(id) {
     if (!confirm('¿Estás seguro de eliminar esta serie? Se eliminarán también todas sus reseñas.')) return;
 

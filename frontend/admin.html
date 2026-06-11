@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administración - MongoReviews</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 </head>
 <body>
     <nav class="navbar" id="navbar"></nav>
@@ -54,7 +55,10 @@
                 </div>
                 <div class="form-group">
                     <label for="editPoster">URL del póster</label>
-                    <input type="url" id="editPoster" placeholder="https://ejemplo.com/poster.jpg">
+                    <div style="display:flex;gap:0.5rem">
+                        <input type="url" id="editPoster" style="flex:1" placeholder="https://ejemplo.com/poster.jpg">
+                        <button type="button" class="btn btn-secondary" onclick="openCloudinaryWidget()">Subir imagen</button>
+                    </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
